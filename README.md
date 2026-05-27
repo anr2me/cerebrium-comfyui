@@ -50,7 +50,7 @@ Everything expensive but GPU-irrelevant runs in `shell_commands` so you are
 | `comfy node install ...` in `run_commands` | `shell_commands` → `python install_plugins.py --registry` |
 | `git clone` ext plugins in `run_commands` | `shell_commands` → `python install_plugins.py --ext` |
 | `image.run_function(install_wheels)` | `shell_commands` → `python install_wheels.py` |
-| `@app.cls(gpu="L4")` | `[cerebrium.hardware] compute = "AMPERE_A10"` |
+| `@app.cls(gpu="L4")` | `[cerebrium.hardware] compute = "ADA_L4"` |
 | `scaledown_window=60` | `[cerebrium.scaling] cooldown = 60` |
 | `@modal.concurrent(max_inputs=10)` | `replica_concurrency = 10` |
 | `timeout=3600` | `response_grace_period = 3600` |
@@ -146,18 +146,8 @@ curl "https://api.aws.us-east-1.cerebrium.ai/v4/p-<ID>/comfyui/view?filename=out
 |---|---|
 | SD1.5 / SDXL / ACE Step | `AMPERE_A10` |
 | FLUX.1 / SDXL + ControlNet | `ADA_L40` |
-| Wan 2.2 / CogVideoX / LTX Video | `HOPPER_H100` |
+| Wan 2.2 / CogVideoX / LTX Video | `BLACKWELL_RTX6000` |
 
 Set `min_replicas = 1` to eliminate cold starts (always-on billing).
 
 ---
-
-## Bugs fixed from original Modal code
-
-| # | Description |
-|---|---|
-| #1 | `git clone` subprocess list had `'--single-branch --branch'` as one bad string token — fixed in `install_plugins.py` |
-| #2 | `pending_prompt` counter not decremented on exception — fixed with `try/finally` in `main.py` |
-| #5 | ComfyUI-Manager triple-installed — removed duplicate from `plugins.example.py` |
-| #7 | `flash-attn-3` + `flash-attn-4` namespace conflict — only `flash-attn-4` installed |
-| #12 | Hardcoded `cp312` ABI tag — now derived dynamically in `install_wheels.py` |

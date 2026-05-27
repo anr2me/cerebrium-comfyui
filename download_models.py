@@ -15,7 +15,7 @@ Usage (called automatically by cerebrium.toml shell_commands):
   python download_models.py
 
 Usage with HF token:
-  HF_TOKEN=hf_xxx python /app/download_models.py
+  HF_TOKEN=hf_xxx python download_models.py
 """
 
 from __future__ import annotations

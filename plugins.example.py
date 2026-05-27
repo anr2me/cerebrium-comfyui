@@ -27,9 +27,9 @@ comfy_plugins_ext = [
     # {
     #     "url":          "https://github.com/owner/repo.git",
     #     "branch":       "main",
-    #     "requirements": "requirements.txt",   # or "pyproject.toml" or leave empty
+    #     "requirements": "requirements.txt",   # and/or "pyproject.toml" or leave empty
     #     "install":      "install.py",          # or "setup.py" or leave empty
-    #     "dependencies": "ninja 'numpy<2'",     # space-separated, --no-deps install
+    #     "dependencies": "numpy<2 setuptools<82",     # space-separated, --no-deps install
     # },
 
     {
@@ -47,6 +47,7 @@ comfy_plugins_ext = [
     {
         "url":          "https://github.com/Lightricks/ComfyUI-LTXVideo.git",
         "branch":       "master",
+        "requirements": "requirements.txt",
         "dependencies": "kornia~=0.6.12",
     },
 ]

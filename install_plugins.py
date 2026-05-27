@@ -54,9 +54,6 @@ def install_ext_plugins() -> None:
           image.run_commands(f"uv pip install --no-deps -r requirements.txt")
           image.run_commands(f"python install.py")
           image.uv_pip_install(plugin_deps, extra_options="--no-deps")
-
-    Also fixes Modal bug #1: '--single-branch --branch' was one string in the
-    original — now correctly split into two list args.
     """
     try:
         from plugins import comfy_plugins_ext
@@ -82,13 +79,12 @@ def install_ext_plugins() -> None:
             subprocess.run(["git", "-C", str(dest), "pull", "--ff-only"], check=False)
         else:
             print(f"  [git clone] {url} (branch={branch})")
-            # BUG FIX #1: '--single-branch' and '--branch' are two separate args
             subprocess.run(
                 [
                     "git", "clone",
                     "--recurse-submodules",
-                    "--single-branch",        # ← was '--single-branch --branch' (one bad token)
-                    "--branch", branch,       # ← now correctly two separate args
+                    "--single-branch", 
+                    "--branch", branch, 
                     url,
                     str(dest),
                 ],

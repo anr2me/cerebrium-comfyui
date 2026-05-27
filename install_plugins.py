@@ -7,8 +7,8 @@ Modal equivalent:
   comfy_plugins_ext → git clone + pip install requirements + python install.py
 
 Usage (called by cerebrium.toml shell_commands):
-  python /app/install_plugins.py --registry    # install comfy_plugins
-  python /app/install_plugins.py --ext         # install comfy_plugins_ext
+  python install_plugins.py --registry    # install comfy_plugins
+  python install_plugins.py --ext         # install comfy_plugins_ext
 """
 
 from __future__ import annotations

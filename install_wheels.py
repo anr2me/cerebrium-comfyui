@@ -19,7 +19,7 @@ def get_torch_minor() -> str:
 
 
 def get_cp_tag() -> str:
-    """Return cpython ABI tag, e.g. 'cp312'. Derived dynamically (fixes bug #12)."""
+    """Return cpython ABI tag, e.g. 'cp312'. Derived dynamically."""
     vi = sys.version_info
     return f"cp{vi.major}{vi.minor}"
 

@@ -90,7 +90,7 @@ shell_commands = [
   # sageattention wheels (pre-built, CPU install is fine)
   "uv pip install --system --no-build-isolation 'sageattention~=2.2.0' --extra-index-url https://comfy-org.github.io/wheels || true",
   "uv pip install --system --no-build-isolation sageattn3 --extra-index-url https://comfy-org.github.io/wheels || true",
-  # flash-attn-4 (pick ONE; remove flash-attn-3 to avoid namespace conflict — see bug #7)
+  "uv pip install --system --no-build-isolation flash-attn-3 --extra-index-url https://download.pytorch.org/whl/cu130 || true", 
   "uv pip install --system --no-build-isolation --pre 'flash-attn-4[cu13]' || true",
   # nunchaku + flash-attn prebuilt wheels (detects torch version inside container)
   "python /app/install_wheels.py || true",
@@ -125,9 +125,9 @@ healthcheck_endpoint = "/health"
 # Change compute to ADA_L40 / HOPPER_H100 for video (Wan2.2, CogVideoX) models.
 # ─────────────────────────────────────────────────────────────────────────────
 [cerebrium.hardware]
-# AMPERE_A10 | ADA_L40 | HOPPER_H100 | A100_40GB | A100_80GB
-compute   = "AMPERE_A10"   # equivalent to Modal L4; upgrade for video models
-cpu       = 4
+# TRN1 | TURING_T4 | AMPERE_A10 | ADA_L4 | ADA_L40 | AMPERE_A100_40GB | AMPERE_A100_80GB | BLACKWELL_RTX6000 | HOPPER_H100 | HOPPER_H200 | BLACKWELL_B200 | BLACKWELL_B300 
+compute   = "ADA_L4"   # equivalent to Modal L4; upgrade for video models
+cpu       = 2
 memory    = 24.0            # GB
 gpu_count = 1
 
@@ -137,7 +137,7 @@ gpu_count = 1
 # ─────────────────────────────────────────────────────────────────────────────
 [cerebrium.scaling]
 min_replicas          = 0    # scale-to-zero when idle (set 1 to eliminate cold starts)
-max_replicas          = 5
+max_replicas          = 1
 cooldown              = 60   # seconds idle before shutdown (Modal: scaledown_window=60)
 replica_concurrency   = 10   # Modal equivalent: @modal.concurrent(max_inputs=10)
 response_grace_period = 3600 # Modal equivalent: timeout=3600

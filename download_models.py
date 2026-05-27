@@ -12,7 +12,7 @@ then symlinked into /root/comfy/ComfyUI/models/<model_dir>/ so ComfyUI
 can find them without duplicating disk usage.
 
 Usage (called automatically by cerebrium.toml shell_commands):
-  python /app/download_models.py
+  python download_models.py
 
 Usage with HF token:
   HF_TOKEN=hf_xxx python /app/download_models.py

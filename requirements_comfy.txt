@@ -1,7 +1,7 @@
 # requirements_comfy.txt
 # Additional Python packages required by ComfyUI or your custom nodes.
 # Installed during the BUILD phase via:
-#   pip install -r /app/requirements_comfy.txt
+#   pip install -r requirements_comfy.txt
 #
 # Add any packages your workflow needs here.
 # torch / torchvision / torchaudio are installed separately via shell_commands

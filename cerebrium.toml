@@ -154,7 +154,7 @@ Pillow       = ">=10.0.0"
 PyYAML       = ">=6.0"
 # torch etc. are installed via shell_commands above with the correct CUDA index URL
 
-[cerebrium.secrets]
+#[cerebrium.secrets]
 # Set HF_TOKEN in the Cerebrium dashboard → Secrets, then reference it here.
 # Equivalent to Modal's modal.Secret.from_name("huggingface-secret")
-HF_TOKEN = "HF_TOKEN"   # leave as-is; Cerebrium injects the actual value at runtime
+#HF_TOKEN = "HF_TOKEN"   # leave as-is; Cerebrium injects the actual value at runtime

@@ -52,6 +52,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
+# Apps communicate using a consistent internal endpoint format: http://api.aws/v4/<project_id>/<app_name>/<func_name> 
 COMFYUI_PORT    = 8188
 COMFYUI_HOST    = "127.0.0.1"
 COMFYUI_URL     = f"http://{COMFYUI_HOST}:{COMFYUI_PORT}"

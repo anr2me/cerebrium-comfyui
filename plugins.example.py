@@ -38,11 +38,15 @@ comfy_plugins_ext = [
     },
     # NOTE: ComfyUI-Manager is intentionally NOT listed here separately —
     # it is already included via comfy-cli's --restore flag in shell_commands.
-    # Adding it here too would cause a duplicate install conflict (Modal bug #5 fixed).
+    # Adding it here too could cause a duplicate install conflict.
+    #{
+    #    "url": "https://github.com/Comfy-Org/ComfyUI-Manager.git", 
+    #    "branch": "main",
+    #    "requirements": "pyproject.toml requirements.txt",
+    #},
     {
         "url":          "https://github.com/Lightricks/ComfyUI-LTXVideo.git",
         "branch":       "master",
-        "install":      "",
-        "dependencies": "ninja",
+        "dependencies": "kornia~=0.6.12",
     },
 ]

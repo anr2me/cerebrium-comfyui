@@ -4,10 +4,6 @@ Called from shell_commands in cerebrium.toml → runs on CPU, NO GPU allocated.
 
 Modal equivalent: install_wheels() run_function() step.
 
-Differences from original:
-  - BUG FIX #12: cp-tag is derived dynamically (not hardcoded cp312)
-  - flash-attn-3 is NOT installed to avoid namespace conflict with flash-attn-4
-    (see Modal bug #7)
 """
 
 from __future__ import annotations
@@ -60,9 +56,6 @@ def main() -> None:
         print(f"  ✗ nunchaku failed (non-fatal): {exc}")
 
     # ── flash-attn 2.x prebuilt wheel ─────────────────────────────────────────
-    # NOTE: We do NOT install flash-attn-3 here because flash-attn-4 is already
-    # installed in shell_commands, and having both causes a namespace conflict
-    # (Modal bug #7 fixed).
     flash_url = (
         f"https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.9.0/"
         f"flash_attn-2.8.3+cu130torch{ver}-{cp_tag}-{cp_tag}-linux_x86_64.whl"

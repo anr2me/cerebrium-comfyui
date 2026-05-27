@@ -51,7 +51,7 @@ shell_commands = [
   # huggingface_hub[hf_transfer]: fast HF downloads during model step
   "uv pip install --system --upgrade pip uv aiohttp fastapi uvicorn[standard] websockets httpx comfy-cli setuptools~=81.0 gradio>=4",
   "uv pip install --system --upgrade 'huggingface_hub[hf_transfer]' hf_transfer",
-  "pip install -r /app/requirements_comfy.txt || true",
+  "pip install -r requirements_comfy.txt || true",
 
   # ── 4. PyTorch (CUDA 13.0) — installing torch does NOT require a GPU ──────
   # Modal equivalent: .uv_pip_install(["torch~=2.10.0", ...], index_url="https://download.pytorch.org/whl/cu130")
@@ -66,19 +66,19 @@ shell_commands = [
   "comfy manager enable-legacy-gui || true",
 
   # Copy extra_model_paths.yaml if present
-  "[ -f /app/extra_model_paths.yaml ] && cp /app/extra_model_paths.yaml /root/comfy/ComfyUI/extra_model_paths.yaml || echo 'No extra_model_paths.yaml found'",
+  "[ -f extra_model_paths.yaml ] && cp extra_model_paths.yaml /root/comfy/ComfyUI/extra_model_paths.yaml || echo 'No extra_model_paths.yaml found'",
 
   # ── 6. Custom nodes — from comfy registry (comfy_plugins) ─────────────────
   # Modal equivalent: image.run_commands("comfy node install " + " ".join(comfy_plugins))
   # Read plugins.py and install; script handles empty list gracefully.
-  "python /app/install_plugins.py --registry || true",
+  "python install_plugins.py --registry || true",
 
   # ── 7. Custom nodes — from git (comfy_plugins_ext) ───────────────────────
   # Modal equivalent: image.run_commands(f"cd {nodes_dir} && git clone --recurse-submodules ...")
-  "python /app/install_plugins.py --ext || true",
+  "python install_plugins.py --ext || true",
 
   # ── 8. Install workflow dependencies (if workflow_api.json present) ───────
-  "[ -f /app/workflow_api.json ] && comfy node install-deps --workflow=/app/workflow_api.json || echo 'No workflow_api.json found'",
+  "[ -f workflow_api.json ] && comfy node install-deps --workflow=workflow_api.json || echo 'No workflow_api.json found'",
 
   # ── 9. Attention / flash-attn wheels ──────────────────────────────────────
   # sageattention wheels (pre-built, CPU install is fine)
@@ -87,13 +87,13 @@ shell_commands = [
   "uv pip install --system --no-build-isolation flash-attn-3 --extra-index-url https://download.pytorch.org/whl/cu130 || true", 
   "uv pip install --system --no-build-isolation --pre 'flash-attn-4[cu13]' || true",
   # nunchaku + flash-attn prebuilt wheels (detects torch version inside container)
-  "python /app/install_wheels.py || true",
+  "python install_wheels.py || true",
 
   # ── 10. Model downloads (HuggingFace + aria2c) ───────────────────────────
   # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
   # Reads models.py — downloads go to /root/comfy/ComfyUI/models/
   # NO GPU needed: this is pure network I/O
-  "HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python /app/download_models.py",
+  "HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python download_models.py",
 
   # ── 11. Misc post-install ─────────────────────────────────────────────────
   "yolo settings sync=False || true",

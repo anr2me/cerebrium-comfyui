@@ -24,22 +24,11 @@ name           = "comfyui"
 python_version = "3.12"
 
 # Files to upload. ComfyUI itself is cloned remotely via shell_commands.
-include = [
-  "main.py",
-  "main-gpu.py",
-  "download_models.py",
-  "install_plugins.py",
-  "install_wheels.py",
-  "cerebrium.toml",
-  "models.py",           # copy from models.example.py and edit
-  "plugins.py",          # copy from plugins.example.py and edit
-  "requirements_comfy.txt",
-  "extra_model_paths.yaml",
-  "workflow_api.json",
-]
+include = ["./*"]
 exclude = [
+  ".*",                # hidden files/dirs (.git, .env, .venv)
+  "__pycache__",
   "*.safetensors", "*.ckpt", "*.pt", "*.bin",
-  "__pycache__", ".git", ".env", ".venv",
   "models.example.py", "plugins.example.py",
 ]
 

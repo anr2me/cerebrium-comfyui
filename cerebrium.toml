@@ -27,6 +27,10 @@ python_version = "3.12"
 include = [
   "main.py",
   "download_models.py",
+  "install_plugins.py",
+  "install_wheels.py",
+  "extra_model_paths.yaml",
+  "workflow_api.json",
   "cerebrium.toml",
   "models.py",           # copy from models.example.py and edit
   "plugins.py",          # copy from plugins.example.py and edit

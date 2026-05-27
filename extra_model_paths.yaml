@@ -1,0 +1,30 @@
+# extra_model_paths.yaml
+# Tells ComfyUI to look for models in additional directories.
+# Copied into /root/comfy/ComfyUI/extra_model_paths.yaml during build.
+#
+# Uncomment and edit sections as needed for your workflow.
+# Official docs: https://github.com/comfyanonymous/ComfyUI#extra-model-paths
+
+# a1111:
+#   base_path: /path/to/stable-diffusion-webui/
+#   checkpoints: models/Stable-diffusion
+#   configs: models/Stable-diffusion
+#   vae: models/VAE
+#   loras: |
+#     models/Lora
+#     models/LyCORIS
+#   upscale_models: |
+#     models/ESRGAN
+#     models/RealESRGAN
+#     models/SwinIR
+#   embeddings: embeddings
+#   hypernetworks: models/hypernetworks
+#   controlnet: models/ControlNet
+
+# cache:
+#   base_path: /cache/
+#   checkpoints: ComfyUI/models/checkpoints
+#   vae: ComfyUI/models/vae
+#   loras: ComfyUI/models/loras
+#   diffusion_models: ComfyUI/models/diffusion_models
+#   text_encoders: ComfyUI/models/text_encoders

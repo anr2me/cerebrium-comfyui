@@ -1,0 +1,29 @@
+# requirements_comfy.txt
+# Additional Python packages required by ComfyUI or your custom nodes.
+# Installed during the BUILD phase via:
+#   pip install -r /app/requirements_comfy.txt
+#
+# Add any packages your workflow needs here.
+# torch / torchvision / torchaudio are installed separately via shell_commands
+# with the correct CUDA index URL — do NOT add them here.
+
+# ComfyUI core extras
+einops
+transformers>=4.28.1
+safetensors>=0.3.0
+accelerate
+peft
+kornia>=0.7.1
+spandrel
+soundfile
+
+# Video support
+imageio
+imageio-ffmpeg
+av
+
+# Utilities
+scipy
+tqdm
+psutil
+GitPython

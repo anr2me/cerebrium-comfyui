@@ -166,5 +166,8 @@ def main() -> None:
     print("\n=== download_models.py complete ===")
 
 
+# Alias
+run = main
+
 if __name__ == "__main__":
     main()

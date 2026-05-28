@@ -197,7 +197,7 @@ def _proxy_headers(request: Request) -> dict:
         k: v for k, v in request.headers.items()
         if k.lower() not in _STRIP_HEADERS
     }
-    # Only accept encodings that httpx will auto-decompress; avoids zstd blob bug
+    # Only accept encodings that httpx will auto-decompress; avoids zstd blob issue
     headers["accept-encoding"] = "gzip, br, deflate"
     return headers
 

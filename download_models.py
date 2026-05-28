@@ -7,7 +7,7 @@ Modal equivalent:
   download_external_model() → aria2c multi-connection download + symlink
   download_all()            → main() here
 
-Models are downloaded to /cache (persistent across builds if cached),
+Models are downloaded to /persistent-storage/cache/ (persistent across builds if cached),
 then symlinked into /root/comfy/ComfyUI/models/<model_dir>/ so ComfyUI
 can find them without duplicating disk usage.
 
@@ -28,7 +28,7 @@ from pathlib import Path
 # ─────────────────────────────────────────────────────────────────────────────
 # Paths  (mirrors the original Modal layout)
 # ─────────────────────────────────────────────────────────────────────────────
-CACHE_DIR        = Path("/cache")
+CACHE_DIR        = Path("/persistent-storage/cache")
 COMFYUI_ROOT     = Path("/root/comfy/ComfyUI")
 COMFY_MODELS_ROOT = COMFYUI_ROOT / "models"
 
@@ -129,11 +129,11 @@ def download_external_model(url: str, filename: str, model_dir: str) -> None:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    print("=== download_models.py (CPU build step — no GPU) ===")
+    print("=== download_models.py ===")
     ensure_dirs()
 
     # Import user model config
-    sys.path.insert(0, "/app")
+    #sys.path.insert(0, "/app")
     try:
         from models import models, models_ext
     except ImportError:

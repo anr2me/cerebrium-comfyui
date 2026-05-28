@@ -21,7 +21,7 @@ from pathlib import Path
 NODES_DIR = Path("/root/comfy/ComfyUI/custom_nodes")
 NODES_DIR.mkdir(parents=True, exist_ok=True)
 
-sys.path.insert(0, "/app")
+#sys.path.insert(0, "/app")
 
 
 def install_registry_plugins() -> None:

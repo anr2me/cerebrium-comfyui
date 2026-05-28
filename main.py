@@ -136,7 +136,7 @@ def _wait_for_port(port: int, timeout: int = STARTUP_TIMEOUT) -> None:
 async def lifespan(app: FastAPI):
     log.info("=== Cold start: launching ComfyUI ===")
 
-    # Download any missing models to /persistent-storage/cache (skips if already cached).
+    # Download any missing models to /persistent-storage/cache (per region, skips if already cached).
     # Runs on first cold start only; subsequent starts skip immediately.
     # models.py is available here (files are in / at runtime).
     try:

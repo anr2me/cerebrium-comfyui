@@ -102,7 +102,7 @@ shell_commands = [
   # ── 12. Security scan on custom nodes (bandit) ────────────────────────────
   # Modal equivalent: image.run_commands("bandit -r {nodes_dir} ...")
   # Non-fatal: exit 0 ensures build doesn't fail on warnings
-  #"python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /root/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high; rm -rf /tmp/scan_venv; exit 0",
+  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /root/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high || true ; rm -rf /tmp/scan_venv || true",
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -33,8 +33,9 @@ exclude = [
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
-# BUILD PHASE — runs on CPU, NO GPU allocated, cached in the container image.
-# Equivalent to Modal's Image.debian_slim().run_commands() / .run_function()
+# BUILD PHASE — runs after project files are copied to working dir (root /).
+# /persistent-storage/ is NOT available here — model downloads are at runtime.
+# GPU is NOT allocated here.
 # ─────────────────────────────────────────────────────────────────────────────
 shell_commands = [
 
@@ -93,7 +94,7 @@ shell_commands = [
   # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
   # Reads models.py — downloads go to /root/comfy/ComfyUI/models/
   # NO GPU needed: this is pure network I/O
-  "HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python download_models.py",
+  #"HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python download_models.py",
 
   # ── 11. Misc post-install ─────────────────────────────────────────────────
   "yolo settings sync=False || true",
@@ -101,11 +102,14 @@ shell_commands = [
   # ── 12. Security scan on custom nodes (bandit) ────────────────────────────
   # Modal equivalent: image.run_commands("bandit -r {nodes_dir} ...")
   # Non-fatal: exit 0 ensures build doesn't fail on warnings
-  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /root/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high; rm -rf /tmp/scan_venv",
+  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /root/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high; rm -rf /tmp/scan_venv; exit 0",
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RUNTIME — GPU allocated HERE and ONLY here.
+# RUNTIME — /persistent-storage/ is mounted and available here.
+# lifespan() in main.py downloads models on first cold start,
+# caches them to /persistent-storage/ — skipped on subsequent cold starts.
+# GPU is billed starting here.
 # FastAPI in main.py starts ComfyUI as a subprocess and proxies requests.
 # ─────────────────────────────────────────────────────────────────────────────
 [cerebrium.runtime.custom]
@@ -154,7 +158,3 @@ Pillow       = ">=10.0.0"
 PyYAML       = ">=6.0"
 # torch etc. are installed via shell_commands above with the correct CUDA index URL
 
-#[cerebrium.secrets]
-# Set HF_TOKEN in the Cerebrium dashboard → Secrets, then reference it here.
-# Equivalent to Modal's modal.Secret.from_name("huggingface-secret")
-#HF_TOKEN = "HF_TOKEN"   # leave as-is; Cerebrium injects the actual value at runtime

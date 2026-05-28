@@ -10,7 +10,6 @@ What is NOT here (moved to shell_commands in cerebrium.toml, NO GPU used):
   • apt / pip / torch installs
   • comfy-cli + ComfyUI install
   • custom node git clones and their pip deps
-  • model downloads (HuggingFace + aria2c)
 
 Modal concept mapping:
   ComfyMix.start_checkpoint()  → lifespan() startup
@@ -53,6 +52,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # Apps communicate using a consistent internal endpoint format: http://api.aws/v4/<project_id>/<app_name>/<func_name> 
+APP_NAME = os.getenv("APP_NAME")
+
 COMFYUI_PORT    = 8188
 COMFYUI_HOST    = "127.0.0.1"
 COMFYUI_URL     = f"http://{COMFYUI_HOST}:{COMFYUI_PORT}"
@@ -76,6 +77,16 @@ _pending_lock = asyncio.Lock()     # guard _pending_prompt (fixes Modal bug #2)
 # ─────────────────────────────────────────────────────────────────────────────
 # ComfyUI process management
 # ─────────────────────────────────────────────────────────────────────────────
+
+import toml
+
+def get_project_id_from_config(config_path="cerebrium.toml") -> str:
+    with open(config_path, "r") as f:
+        config = toml.load(f)
+    
+    # Access the project_name or project_id in your TOML
+    return config.get("project_name")
+
 
 def _ensure_dirs() -> None:
     for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR]:
@@ -133,10 +144,22 @@ def _wait_for_port(port: int, timeout: int = STARTUP_TIMEOUT) -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     log.info("=== Cold start: launching ComfyUI ===")
+
+    # Download any missing models to /persistent-storage/cache (skips if already cached).
+    # Runs on first cold start only; subsequent starts skip immediately.
+    # models.py is available here (files are in / at runtime).
+    try:
+        import download_models
+        download_models.run()
+    except Exception as exc:
+        log.warning(f"Model download step failed (non-fatal): {exc}")
+
+    # Launch ComfyUI
     _start_comfyui()
     _wait_for_port(COMFYUI_PORT, timeout=STARTUP_TIMEOUT)
     log.info("=== ComfyUI ready — accepting requests ===")
     yield
+    
     # Shutdown
     if _comfyui_proc and _comfyui_proc.poll() is None:
         log.info("Terminating ComfyUI process …")
@@ -219,8 +242,6 @@ async def _forward(
 # ─────────────────────────────────────────────────────────────────────────────
 # Prompt / queue endpoints  (trigger GPU work)
 # Modal equivalent: proxy_prompt() + pending_prompt counter
-#
-# Bug #2 fix applied: try/finally guarantees _pending_prompt is always decremented
 # ─────────────────────────────────────────────────────────────────────────────
 
 @app.post("/prompt")

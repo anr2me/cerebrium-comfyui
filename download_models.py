@@ -8,7 +8,7 @@ Modal equivalent:
   download_all()            → main() here
 
 Models are downloaded to /persistent-storage/cache/ (persistent across builds if cached),
-then symlinked into /root/comfy/ComfyUI/models/<model_dir>/ so ComfyUI
+then symlinked into /cortex/comfy/ComfyUI/models/<model_dir>/ so ComfyUI
 can find them without duplicating disk usage.
 
 Usage (called automatically by cerebrium.toml shell_commands):
@@ -29,7 +29,7 @@ from pathlib import Path
 # Paths  (mirrors the original Modal layout)
 # ─────────────────────────────────────────────────────────────────────────────
 CACHE_DIR        = Path("/persistent-storage/cache")
-COMFYUI_ROOT     = Path("/root/comfy/ComfyUI")
+COMFYUI_ROOT     = Path("/cortex/comfy/ComfyUI")
 COMFY_MODELS_ROOT = COMFYUI_ROOT / "models"
 
 # Directories to pre-create (same as download_all() in the original)

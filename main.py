@@ -76,7 +76,7 @@ PROXY_TIMEOUT   = 120   # seconds for general HTTP proxy calls
 _comfyui_proc: Optional[subprocess.Popen] = None
 _pending_prompt: int = 0           # incremented before forward, decremented after
 _inqueue:        int = 0           # last known ComfyUI queue depth (from WS status msgs)
-_pending_lock = asyncio.Lock()     # guard _pending_prompt (fixes Modal bug #2)
+_pending_lock = asyncio.Lock()     # guard _pending_prompt
 
 
 # ─────────────────────────────────────────────────────────────────────────────

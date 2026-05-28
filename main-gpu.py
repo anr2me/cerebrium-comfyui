@@ -65,9 +65,11 @@ COMFYUI_PORT     = int(os.getenv("COMFYUI_PORT", "8189"))
 COMFYUI_HOST     = "127.0.0.1"
 COMFYUI_URL      = f"http://{COMFYUI_HOST}:{COMFYUI_PORT}"
 
-USER_DIR         = Path("/cache/ComfyUI/user")
-OUTPUT_DIR       = Path("/cache/ComfyUI/output")
-INPUT_DIR        = Path("/cache/ComfyUI/input")
+BASE_DIR        = Path("/persistent-storage/cache/ComfyUI/")
+USER_DIR        = Path("/persistent-storage/cache/ComfyUI/user")
+OUTPUT_DIR      = Path("/persistent-storage/cache/ComfyUI/output")
+INPUT_DIR       = Path("/persistent-storage/cache/ComfyUI/input")
+TEMP_DIR        = Path("/persistent-storage/cache/ComfyUI/temp")
 
 STARTUP_TIMEOUT  = 300   # Modal: startup_timeout=300
 PROXY_TIMEOUT    = 120
@@ -94,7 +96,7 @@ _pending_lock = asyncio.Lock()   # guard _pending  (fixes Modal bug #2)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _ensure_dirs() -> None:
-    for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR]:
+    for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR, TEMP_DIR]:
         d.mkdir(parents=True, exist_ok=True)
 
 

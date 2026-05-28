@@ -61,13 +61,13 @@ shell_commands = [
 
   # ── 5. Install ComfyUI via comfy-cli ──────────────────────────────────────
   # Modal equivalent: .run_commands("comfy --skip-prompt install --restore --nvidia --cuda-version 13.0")
-  # ComfyUI lands at: /root/comfy/ComfyUI
+  # ComfyUI lands at: /cortex/comfy/ComfyUI
   "comfy --skip-prompt --no-enable-telemetry tracking disable",
   "comfy --skip-prompt install --restore --nvidia --cuda-version 13.0",
   "comfy manager enable-legacy-gui || true",
 
   # Copy extra_model_paths.yaml if present
-  "[ -f extra_model_paths.yaml ] && cp extra_model_paths.yaml /root/comfy/ComfyUI/extra_model_paths.yaml || echo 'No extra_model_paths.yaml found'",
+  "[ -f extra_model_paths.yaml ] && cp extra_model_paths.yaml /cortex/comfy/ComfyUI/extra_model_paths.yaml || echo 'No extra_model_paths.yaml found'",
 
   # ── 6. Custom nodes — from comfy registry (comfy_plugins) ─────────────────
   # Modal equivalent: image.run_commands("comfy node install " + " ".join(comfy_plugins))
@@ -92,7 +92,7 @@ shell_commands = [
 
   # ── 10. Model downloads (HuggingFace + aria2c) ───────────────────────────
   # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
-  # Reads models.py — downloads go to /root/comfy/ComfyUI/models/
+  # Reads models.py — downloads go to /cortex/comfy/ComfyUI/models/
   # NO GPU needed: this is pure network I/O
   #"HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python download_models.py",
 
@@ -102,7 +102,7 @@ shell_commands = [
   # ── 12. Security scan on custom nodes (bandit) ────────────────────────────
   # Modal equivalent: image.run_commands("bandit -r {nodes_dir} ...")
   # Non-fatal: exit 0 ensures build doesn't fail on warnings
-  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /root/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high || true ; rm -rf /tmp/scan_venv || true",
+  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /cortex/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high || true ; rm -rf /tmp/scan_venv || true",
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────

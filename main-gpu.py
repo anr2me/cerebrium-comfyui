@@ -90,7 +90,7 @@ _active:  int = 0   # incremented on restore, decremented on cleanup
 _inqueue: int = 0   # last known ComfyUI queue_remaining
 _pending: int = 0   # prompts in-flight (not yet acked by ComfyUI)
 
-_pending_lock = asyncio.Lock()   # guard _pending  (fixes Modal bug #2)
+_pending_lock = asyncio.Lock()   # guard _pending
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ _STRIP_HEADERS = frozenset([
 
 def _proxy_headers(request: Request) -> dict:
     h = {k: v for k, v in request.headers.items() if k.lower() not in _STRIP_HEADERS}
-    h["accept-encoding"] = "gzip, br, deflate"   # avoid zstd blob (Modal bug #9)
+    h["accept-encoding"] = "gzip, br, deflate"   # avoid zstd blob issue
     return h
 
 
@@ -280,7 +280,7 @@ async def _forward(
 # ─────────────────────────────────────────────────────────────────────────────
 # Prompt / queue  (GPU inference trigger)
 #
-# pending counter guarded with try/finally — fixes Modal bug #2
+# pending counter guarded with try/finally
 # ─────────────────────────────────────────────────────────────────────────────
 
 @app.post("/prompt")

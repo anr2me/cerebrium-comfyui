@@ -52,7 +52,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # Apps communicate using a consistent internal endpoint format: http://api.aws/v4/<project_id>/<app_name>/<func_name> 
-APP_NAME = os.getenv("APP_NAME")
+PROJECT_ID = os.getenv("PROJECT_ID", "PROJECT_ID")
+APP_NAME = os.getenv("APP_NAME", "APP_NAME")
 
 COMFYUI_PORT    = 8188
 COMFYUI_HOST    = "127.0.0.1"
@@ -77,16 +78,6 @@ _pending_lock = asyncio.Lock()     # guard _pending_prompt (fixes Modal bug #2)
 # ─────────────────────────────────────────────────────────────────────────────
 # ComfyUI process management
 # ─────────────────────────────────────────────────────────────────────────────
-
-import toml
-
-def get_project_id_from_config(config_path="cerebrium.toml") -> str:
-    with open(config_path, "r") as f:
-        config = toml.load(f)
-    
-    # Access the project_name or project_id in your TOML
-    return config.get("project_name")
-
 
 def _ensure_dirs() -> None:
     for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR]:

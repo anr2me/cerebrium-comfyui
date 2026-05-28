@@ -39,6 +39,7 @@ REQUIRED_DIRS = [
     COMFYUI_ROOT / "output",
     COMFYUI_ROOT / "user" / "default" / "workflows",
     COMFYUI_ROOT / "custom_nodes",
+    COMFYUI_ROOT / "temp",
     COMFY_MODELS_ROOT,
 ]
 
@@ -65,6 +66,8 @@ def ensure_dirs() -> None:
 def hf_download(repo_id: str, filename: str, model_dir: str = "checkpoints") -> None:
     from huggingface_hub import hf_hub_download
 
+    os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
+    os.environ["HF_XET_HIGH_PERFORMANCE"] = "1"
     token = os.environ.get("HF_TOKEN") or None
     print(f"  [HF] {repo_id}/{filename} → models/{model_dir}/")
 

@@ -2,17 +2,17 @@
 # Copy this file to models.py and edit it to configure your model downloads.
 #
 # Models are downloaded during the BUILD phase (CPU, no GPU cost) via
-# download_models.py, then symlinked into /root/comfy/ComfyUI/models/.
+# download_models.py, then symlinked into /cortex/comfy/ComfyUI/models/.
 #
 # `model_dir` accepts two styles:
 #
 #  1. Relative path (recommended for standard ComfyUI model folders):
-#     "checkpoints"       → /root/comfy/ComfyUI/models/checkpoints
-#     "loras/wan22"       → /root/comfy/ComfyUI/models/loras/wan22
+#     "checkpoints"       → /cortex/comfy/ComfyUI/models/checkpoints
+#     "loras/wan22"       → /cortex/comfy/ComfyUI/models/loras/wan22
 #
 #  2. Absolute path (use when target is outside ComfyUI/models/,
 #     e.g. a custom node's own model directory):
-#     "/root/comfy/ComfyUI/custom_nodes/ComfyUI-ReActor/models/insightface"
+#     "/cortex/comfy/ComfyUI/custom_nodes/ComfyUI-ReActor/models/insightface"
 #
 # Common subdirs under ComfyUI/models/:
 #   checkpoints, diffusion_models, vae, loras, text_encoders,

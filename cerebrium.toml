@@ -125,7 +125,7 @@ healthcheck_endpoint = "/health"
 [cerebrium.hardware]
 # CPU | TRN1 | TURING_T4 | AMPERE_A10 | ADA_L4 | ADA_L40 | AMPERE_A100_40GB | AMPERE_A100_80GB | BLACKWELL_RTX6000 | HOPPER_H100 | HOPPER_H200 | BLACKWELL_B200 | BLACKWELL_B300 
 compute   = "ADA_L4"   # equivalent to Modal L4; upgrade for video models
-cpu       = 2
+cpu       = 4
 memory    = 24.0       # GB
 gpu_count = 1          # 0 for CPU compute
 

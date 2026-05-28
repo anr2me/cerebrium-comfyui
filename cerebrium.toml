@@ -143,8 +143,8 @@ response_grace_period = 3600 # Modal equivalent: timeout=3600
 # ─────────────────────────────────────────────────────────────────────────────
 # Python dependencies installed at build time (pip, no GPU)
 # ─────────────────────────────────────────────────────────────────────────────
-[cerebrium.dependencies.paths]
-pip = "requirements_comfy.txt"
+#[cerebrium.dependencies.paths]
+#pip = "requirements_comfy.txt"
 
 [cerebrium.dependencies.pip]
 uvicorn      = ">=0.29.0"

@@ -70,6 +70,8 @@ USER_DIR        = Path("/persistent-storage/cache/ComfyUI/user")
 OUTPUT_DIR      = Path("/persistent-storage/cache/ComfyUI/output")
 INPUT_DIR       = Path("/persistent-storage/cache/ComfyUI/input")
 TEMP_DIR        = Path("/persistent-storage/cache/ComfyUI/temp")
+MODELS_DIR      = Path("/persistent-storage/cache/ComfyUI/models")
+CUSNODES_DIR    = Path("/persistent-storage/cache/ComfyUI/custom_nodes")
 
 STARTUP_TIMEOUT  = 300   # Modal: startup_timeout=300
 PROXY_TIMEOUT    = 120
@@ -96,7 +98,7 @@ _pending_lock = asyncio.Lock()   # guard _pending  (fixes Modal bug #2)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _ensure_dirs() -> None:
-    for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR, TEMP_DIR]:
+    for d in [USER_DIR / "default/workflows", OUTPUT_DIR, INPUT_DIR, TEMP_DIR, MODELS_DIR, CUSNODES_DIR]:
         d.mkdir(parents=True, exist_ok=True)
 
 

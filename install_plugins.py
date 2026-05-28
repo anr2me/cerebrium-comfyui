@@ -18,7 +18,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-NODES_DIR = Path("/root/comfy/ComfyUI/custom_nodes")
+NODES_DIR = Path("/cortex/comfy/ComfyUI/custom_nodes")
 NODES_DIR.mkdir(parents=True, exist_ok=True)
 
 #sys.path.insert(0, "/app")

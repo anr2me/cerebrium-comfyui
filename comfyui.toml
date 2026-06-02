@@ -1,0 +1,162 @@
+# cerebrium.toml
+# Converted from anr2me/modal-comfyui → Cerebrium serverless deployment.
+#
+# ┌─────────────────────────────────────────────────────────────┐
+# │  GPU COST PHILOSOPHY                                        │
+# │  shell_commands  = build phase = CPU only = FREE of GPU     │
+# │  entrypoint      = runtime     = GPU billed only here       │
+# │                                                             │
+# │  ALL of the following run with NO GPU allocated:            │
+# │   • apt-get installs                                        │
+# │   • pip / torch installs                                    │
+# │   • comfy-cli + ComfyUI install                             │
+# │   • custom node git clones & pip deps                       │
+# │   • model downloads (HuggingFace + aria2c)                  │
+# │   • security scan (bandit)                                  │
+# └─────────────────────────────────────────────────────────────┘
+#
+# Deploy:  cerebrium deploy
+# Logs:    cerebrium logs comfyui
+# Delete:  cerebrium delete comfyui
+
+[cerebrium.deployment]
+name           = "comfyui"
+python_version = "3.12"
+
+# Files to upload. ComfyUI itself is cloned remotely via shell_commands.
+include = ["./*"]
+exclude = [
+  ".*",                # hidden files/dirs (.git, .env, .venv)
+  "__pycache__",
+  "*.safetensors", "*.ckpt", "*.pt", "*.bin",
+  "models.example.py", "plugins.example.py",
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BUILD PHASE — runs after project files are copied to working dir (root /).
+# /persistent-storage/ is NOT available here — model downloads are at runtime.
+# GPU is NOT allocated here.
+# ─────────────────────────────────────────────────────────────────────────────
+shell_commands = [
+
+  # ── 1. System dependencies ────────────────────────────────────────────────
+  "apt-get update -qq && apt-get install -y --no-install-recommends git git-lfs libgl1-mesa-dev libglib2.0-0 aria2 ffmpeg wget curl",
+  "git lfs install",
+
+  # ── 2. Base Python tools ──────────────────────────────────────────────────
+  "pip install -q uv",
+
+  # ── 3. Core Python packages ───────────────────────────────────────────────
+  # comfy-cli: installs ComfyUI and manages custom nodes
+  # httpx/websockets/fastapi: for the proxy in main.py
+  # huggingface_hub[hf_transfer]: fast HF downloads during model step
+  "uv pip install --system --upgrade pip uv aiohttp fastapi uvicorn[standard] websockets httpx comfy-cli setuptools~=81.0 gradio>=4",
+  "uv pip install --system --upgrade 'huggingface_hub[hf_transfer]' hf_transfer",
+  "pip install -r requirements_comfy.txt || true",
+
+  # ── 4. PyTorch (CUDA 13.0) — installing torch does NOT require a GPU ──────
+  # Modal equivalent: .uv_pip_install(["torch~=2.10.0", ...], index_url="https://download.pytorch.org/whl/cu130")
+  "uv pip install --system --upgrade 'torch~=2.10.0' 'torchao~=0.16.0' 'torchvision~=0.25.0' 'torchaudio~=2.10.0' --index-url https://download.pytorch.org/whl/cu130",
+  "uv pip install --system cupy-cuda13x",
+
+  # ── 5. Install ComfyUI via comfy-cli ──────────────────────────────────────
+  # Modal equivalent: .run_commands("comfy --skip-prompt install --restore --nvidia --cuda-version 13.0")
+  # ComfyUI lands at: /cortex/comfy/ComfyUI
+  "comfy --skip-prompt --no-enable-telemetry tracking disable",
+  "comfy --skip-prompt install --restore --nvidia --cuda-version 13.0",
+  "comfy manager enable-legacy-gui || true",
+
+  # Copy extra_model_paths.yaml if present
+  "[ -f extra_model_paths.yaml ] && cp extra_model_paths.yaml /cortex/comfy/ComfyUI/extra_model_paths.yaml || echo 'No extra_model_paths.yaml found'",
+
+  # ── 6. Custom nodes — from comfy registry (comfy_plugins) ─────────────────
+  # Modal equivalent: image.run_commands("comfy node install " + " ".join(comfy_plugins))
+  # Read plugins.py and install; script handles empty list gracefully.
+  "python install_plugins.py --registry || true",
+
+  # ── 7. Custom nodes — from git (comfy_plugins_ext) ───────────────────────
+  # Modal equivalent: image.run_commands(f"cd {nodes_dir} && git clone --recurse-submodules ...")
+  "python install_plugins.py --ext || true",
+
+  # ── 8. Install workflow dependencies (if workflow_api.json present) ───────
+  "[ -f workflow_api.json ] && comfy node install-deps --workflow=workflow_api.json || echo 'No workflow_api.json found'",
+
+  # ── 9. Attention / flash-attn wheels ──────────────────────────────────────
+  # sageattention wheels (pre-built, CPU install is fine)
+  "uv pip install --system --no-build-isolation 'sageattention~=2.2.0' --extra-index-url https://comfy-org.github.io/wheels || true",
+  "uv pip install --system --no-build-isolation sageattn3 --extra-index-url https://comfy-org.github.io/wheels || true",
+  "uv pip install --system --no-build-isolation flash-attn-3 --extra-index-url https://download.pytorch.org/whl/cu130 || true", 
+  "uv pip install --system --no-build-isolation --pre 'flash-attn-4[cu13]' || true",
+  # nunchaku + flash-attn prebuilt wheels (detects torch version inside container)
+  "python install_wheels.py || true",
+
+  # ── 10. Model downloads (HuggingFace + aria2c) ───────────────────────────
+  # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
+  # Reads models.py — downloads go to /cortex/comfy/ComfyUI/models/
+  # NO GPU needed: this is pure network I/O
+  #"HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1 python download_models.py",
+
+  # ── 11. Misc post-install ─────────────────────────────────────────────────
+  "yolo settings sync=False || true",
+
+  # ── 12. Security scan on custom nodes (bandit) ────────────────────────────
+  # Modal equivalent: image.run_commands("bandit -r {nodes_dir} ...")
+  # Non-fatal: exit 0 ensures build doesn't fail on warnings
+  "python -m venv /tmp/scan_venv && /tmp/scan_venv/bin/pip install -q 'bandit[toml]' && /tmp/scan_venv/bin/bandit -r /cortex/comfy/ComfyUI/custom_nodes -n 3 --severity-level=high || true ; rm -rf /tmp/scan_venv || true",
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RUNTIME — /persistent-storage/ is mounted and available here.
+# lifespan() in main.py downloads models on first cold start,
+# caches them to /persistent-storage/ — skipped on subsequent cold starts.
+# GPU is billed starting here.
+# FastAPI in main.py starts ComfyUI as a subprocess and proxies requests.
+# ─────────────────────────────────────────────────────────────────────────────
+[cerebrium.runtime.custom]
+port                 = 8765
+entrypoint           = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8765", "--log-level", "info"]
+healthcheck_endpoint = "/health"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Hardware
+# Modal equivalent: @app.cls(gpu=GPU_MODEL, memory=(128, 262144))
+# Change compute to ADA_L40 / HOPPER_H100 for video (Wan2.2, CogVideoX) models.
+# Memory and CPU are billed based on usage, which reduces costs for end-users 
+# and doesn’t require the overprovisioning of an entire instance.
+# ─────────────────────────────────────────────────────────────────────────────
+[cerebrium.hardware]
+# CPU | INF2 | TRN1 | TURING_T4 | AMPERE_A10 | ADA_L4 | ADA_L40 | AMPERE_A100_40GB | AMPERE_A100_80GB | BLACKWELL_RTX6000 | HOPPER_H100 | HOPPER_H200 | BLACKWELL_B200 | BLACKWELL_B300 
+compute   = "ADA_L4"   # equivalent to Modal L4; upgrade for video models
+cpu       = 4          # CPU cores (max 48), doesn't support fractional number on GPU compute
+memory    = 24.0       # GB RAM size (max 96 GB for CPU compute), the recommended size is at least to match the VRAM size
+gpu_count = 1          # 0 for CPU compute
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Scaling
+# Modal equivalent: scaledown_window=60, max_containers=1
+# ─────────────────────────────────────────────────────────────────────────────
+[cerebrium.scaling]
+min_replicas          = 0    # scale-to-zero when idle (set 1 to eliminate cold starts)
+max_replicas          = 1
+cooldown              = 60   # seconds idle before shutdown (Modal: scaledown_window=60)
+replica_concurrency   = 10   # Modal equivalent: @modal.concurrent(max_inputs=10)
+response_grace_period = 3600 # Modal equivalent: timeout=3600
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Python dependencies installed at build time (pip, no GPU)
+# ─────────────────────────────────────────────────────────────────────────────
+#[cerebrium.dependencies.paths]
+#pip = "requirements_comfy.txt"
+
+[cerebrium.dependencies.pip]
+uvicorn      = ">=0.29.0"
+fastapi      = ">=0.111.0"
+pydantic     = ">=2.0.0"
+websockets   = ">=12.0"
+httpx        = ">=0.27.0"
+aiohttp      = ">=3.9.0"
+aiofiles     = ">=23.0.0"
+Pillow       = ">=10.0.0"
+PyYAML       = ">=6.0"
+# torch etc. are installed via shell_commands above with the correct CUDA index URL
+

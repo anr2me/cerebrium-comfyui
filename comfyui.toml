@@ -126,10 +126,10 @@ healthcheck_endpoint = "/health"
 # ─────────────────────────────────────────────────────────────────────────────
 [cerebrium.hardware]
 # CPU | INF2 | TRN1 | TURING_T4 | AMPERE_A10 | ADA_L4 | ADA_L40 | AMPERE_A100_40GB | AMPERE_A100_80GB | BLACKWELL_RTX6000 | HOPPER_H100 | HOPPER_H200 | BLACKWELL_B200 | BLACKWELL_B300 
-compute   = "ADA_L4"   # equivalent to Modal L4; upgrade for video models
-cpu       = 4          # CPU cores (max 48), doesn't support fractional number on GPU compute
-memory    = 24.0       # GB RAM size (max 96 GB for CPU compute), the recommended size is at least to match the VRAM size
-gpu_count = 1          # 0 for CPU compute
+compute   = "CPU"   # equivalent to Modal L4; upgrade for video models
+cpu       = 2       # CPU cores (max 48), doesn't support fractional number on GPU compute
+memory    = 4.0     # GB RAM size (max 96 GB for CPU compute), the recommended size is at least to match the VRAM size
+gpu_count = 0       # 0 for CPU compute
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Scaling

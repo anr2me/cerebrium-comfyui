@@ -145,8 +145,8 @@ curl "https://api.aws.us-east-1.cerebrium.ai/v4/p-<ID>/comfyui/view?filename=out
 
 | Use case | `compute` value |
 |---|---|
-| SD1.5 / SDXL / ACE Step | `AMPERE_A10` |
-| FLUX.1 / SDXL + ControlNet | `ADA_L40` |
+| SD1.5 / SDXL / ACE Step | `AMPERE_A10` / `ADA_L4` |
+| FLUX.1 / Qwen Image / SDXL + ControlNet | `ADA_L40` |
 | Wan 2.2 / CogVideoX / LTX Video | `BLACKWELL_RTX6000` |
 
 Set `min_replicas = 1` to eliminate cold starts (always-on billing).

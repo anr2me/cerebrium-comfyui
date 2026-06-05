@@ -102,7 +102,8 @@ add a secret named `HF_TOKEN` with your HF access token.
 ### 6. Deploy
 
 ```bash
-cerebrium deploy
+# cerebrium deploy
+python deploy.py
 ```
 
 The first deploy is slower (it runs all `shell_commands`). Subsequent deploys

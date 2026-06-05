@@ -1,4 +1,4 @@
-# ComfyUI on Cerebrium
+# ComfyUI on Cerebrium.ai
 > Converted from **anr2me/modal-comfyui** (Modal) → **Cerebrium** serverless.
 
 ## File structure

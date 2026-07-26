@@ -4,7 +4,7 @@ Called from shell_commands in cerebrium.toml → runs on CPU, NO GPU allocated.
 
 Modal equivalent:
   hf_download()            → hf_hub_download()  with symlink into ComfyUI/models/
-  download_external_model() → aria2c multi-connection download + symlink
+  download_external_model() → axel multi-connection download + symlink
   download_all()            → main() here
 
 Models are downloaded to /persistent-storage/cache/ (persistent across builds if cached),
@@ -99,23 +99,19 @@ def download_external_model(url: str, filename: str, model_dir: str) -> None:
     cached_path = CACHE_DIR / filename
 
     if not cached_path.exists():
-        print(f"  [aria2c] downloading {filename} …")
+        print(f"  [axel] downloading {filename} …")
         subprocess.run(
             [
-                "aria2c",
-                "--console-log-level=error",
-                "--summary-interval=0",
-                "-x", "16",
-                "-s", "16",
-                "-o", filename,
-                "-d", str(CACHE_DIR),
+                "axel",
+                "-n", "16",
+                "-o", cached_path,
                 url,
             ],
             check=True,
             # Let stdout/stderr pass through so progress is visible in build logs
         )
     else:
-        print(f"  [aria2c] already cached: {filename}")
+        print(f"  [axel] already cached: {filename}")
 
     target_dir  = resolve_model_dir(model_dir)
     target_dir.mkdir(parents=True, exist_ok=True)

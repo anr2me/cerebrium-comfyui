@@ -90,7 +90,7 @@ shell_commands = [
   # nunchaku + flash-attn prebuilt wheels (detects torch version inside container)
   "python install_wheels.py || true",
 
-  # ── 10. Model downloads (HuggingFace + aria2c) ───────────────────────────
+  # ── 10. Model downloads (HuggingFace + axel) ───────────────────────────
   # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
   # Reads models.py — downloads go to /cortex/comfy/ComfyUI/models/
   # NO GPU needed: this is pure network I/O

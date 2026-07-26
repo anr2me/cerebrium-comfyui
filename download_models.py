@@ -91,7 +91,7 @@ def hf_download(repo_id: str, filename: str, model_dir: str = "checkpoints") -> 
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# External (aria2c) download
+# External download
 # Modal equivalent: download_external_model()
 # ─────────────────────────────────────────────────────────────────────────────
 

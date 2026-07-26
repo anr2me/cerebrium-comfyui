@@ -11,7 +11,7 @@
 # │   • pip / torch installs                                    │
 # │   • comfy-cli + ComfyUI install                             │
 # │   • custom node git clones & pip deps                       │
-# │   • model downloads (HuggingFace + aria2c)                  │
+# │   • model downloads (HuggingFace + axel)                  │
 # │   • security scan (bandit)                                  │
 # └─────────────────────────────────────────────────────────────┘
 #
@@ -40,7 +40,7 @@ exclude = [
 shell_commands = [
 
   # ── 1. System dependencies ────────────────────────────────────────────────
-  "apt-get update -qq && apt-get install -y --no-install-recommends git git-lfs libgl1-mesa-dev libglib2.0-0 aria2 ffmpeg wget curl",
+  "apt-get update -qq && apt-get install -y --no-install-recommends git git-lfs libgl1-mesa-dev libglib2.0-0 axel ffmpeg wget curl",
   "git lfs install",
 
   # ── 2. Base Python tools ──────────────────────────────────────────────────
@@ -90,7 +90,7 @@ shell_commands = [
   # nunchaku + flash-attn prebuilt wheels (detects torch version inside container)
   "python install_wheels.py || true",
 
-  # ── 10. Model downloads (HuggingFace + aria2c) ───────────────────────────
+  # ── 10. Model downloads (HuggingFace + axel) ───────────────────────────
   # Modal equivalent: image.run_function(download_all, volumes={"/cache": vol})
   # Reads models.py — downloads go to /cortex/comfy/ComfyUI/models/
   # NO GPU needed: this is pure network I/O

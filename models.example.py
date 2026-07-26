@@ -71,7 +71,7 @@ models = [
 ]
 
 models_ext = [
-    # ── External downloads (via aria2c) ────────────────────────────────────
+    # ── External downloads ────────────────────────────────────
     # Use for CivitAI, direct URLs, etc.
     #
     # {
